@@ -14,6 +14,10 @@ import ShipmentPage from "./pages/Dashboard";
 import Dashboard from "./pages/Dashboard";
 import IntegrationPage from "./pages/IntegrationPage";
 import CallsPage from "./pages/CallsPage";
+import LogsPage from "./pages/LogsPage";
+import BugsPage from "./pages/BugsPage";
+import TicketsPage from "./pages/TicketsPage";
+import ExaminationPage from "./pages/ExaminationPage";
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated } = useAuth();
@@ -51,19 +55,35 @@ const AppRoutes = () => {
       />
 
       <Route
-        path="/integrations"
+        path="/logs"
         element={
           <ProtectedRoute>
-            <IntegrationPage />
+            <LogsPage />
           </ProtectedRoute>
         }
       />
 
       <Route
-        path="/meetings"
+        path="/bugs"
         element={
           <ProtectedRoute>
-            <CallsPage />
+            <BugsPage />
+          </ProtectedRoute>
+        }
+      />
+        <Route
+        path="/tickets"
+        element={
+          <ProtectedRoute>
+            <TicketsPage />
+          </ProtectedRoute>
+        }
+      />
+            <Route
+        path="/examinations"
+        element={
+          <ProtectedRoute>
+            <ExaminationPage />
           </ProtectedRoute>
         }
       />

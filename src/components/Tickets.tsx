@@ -1,33 +1,33 @@
 import { useApi } from "@/contexts/ApiProvider";
 import React, { useState, useEffect } from "react";
 
-const Users = () => {
-  const [users, setUsers] = useState([]);
+const Tickets = () => {
+  const [tickets, setTickets] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
   const api = useApi();
 
   useEffect(() => {
-    const fetchUsers = async () => {
+    const fetchTickets = async () => {
       try {
         const response = await api.get(
-          `/api/users/?${
+          `/api/tickets/?${
             searchTerm ? `&search=${searchTerm}` : ""
           }&page=${currentPage}`
         );
         if (response.ok) {
-          setUsers(response.body.results);
-          setTotalPages(Math.ceil(response.body.count / 10)); // Assuming 10 users per page
+          setTickets(response.body.results);
+          setTotalPages(Math.ceil(response.body.count / 10)); // Assuming 10 tickets per page
         } else {
-          console.error("Error fetching users");
+          console.error("Error fetching tickets");
         }
       } catch (error) {
-        console.error("Error fetching users:", error);
+        console.error("Error fetching tickets:", error);
       }
     };
 
-    fetchUsers();
+    fetchTickets();
   }, [api, currentPage, searchTerm]);
 
   // Handle page change
@@ -51,60 +51,56 @@ const Users = () => {
   return (
     <div className="p-5 rounded-lg shadow-xl bg-gray-800 text-white">
       <div className="flex justify-center mb-8 items-center gap-4">
-        <h2 className="text-2xl font-bold">Users</h2>
+        <h2 className="text-2xl font-bold">Tickets</h2>
       </div>
 
       <div className="mb-4 w-full flex gap-8">
         <input
           type="text"
-          placeholder="Search users..."
+          placeholder="Search tickets..."
           value={searchTerm}
           onChange={handleSearch}
           className="p-2 w-full rounded bg-gray-700 border border-gray-600 text-white"
         />
-   
-          <button
-            className="bg-cyan-600 text-white w-1/3 rounded"
-            onClick={() =>
-              alert("Functionality to add a new user will be implemented soon.")
-            }
-          >
-            Add New User
-          </button>
-      
+        <button
+          className="bg-cyan-600 text-white w-1/3 rounded"
+          onClick={() =>
+            alert("Functionality to add a new ticket will be implemented soon.")
+          }
+        >
+          Add New Ticket
+        </button>
       </div>
 
-      {users.length > 0 ? (
+      {tickets.length > 0 ? (
         <div className="overflow-x-auto">
-          <table className="min-w-full bg-gray-900  border border-gray-700 rounded-lg">
+          <table className="min-w-full bg-gray-900 border border-gray-700 rounded-lg">
             <thead>
               <tr className="bg-gray-700 text-start text-gray-200">
                 <th className="py-3 text-start pl-4 border-b">ID</th>
-                <th className="py-3  text-start pl-4 border-b">Username</th>
-                <th className="py-3 text-start pl-4   border-b">Email</th>
-                <th className="py-3 text-start pl-4  border-b">Phone Number</th>
-                <th className="py-3  text-start pl-4  border-b">Serial Number</th>
+                <th className="py-3 text-start pl-4 border-b">Customer Username</th>
+                <th className="py-3 text-start pl-4 border-b">Title</th>
+                <th className="py-3 text-start pl-4 border-b">Body</th>
+                <th className="py-3 text-start pl-4 border-b">Created At</th>
+                <th className="py-3 text-start pl-4 border-b">Active</th>
               </tr>
             </thead>
             <tbody>
-              {users.map((user) => (
-                <tr key={user.id} className="bg-zinc-800 hover:bg-gray-800">
-                  <td className="py-2 px-4 border-b">{user.id}</td>
-                  <td className="py-2 px-4 border-b">{user.username}</td>
-                  <td className="py-2 px-4 border-b">{user.email}</td>
-                  <td className="py-2 px-4 border-b">
-                    {user.phone_number || "N/A"}
-                  </td>
-                  <td className="py-2 px-4 border-b">
-                    {user.serial_number || "N/A"}
-                  </td>
+              {tickets.map((ticket) => (
+                <tr key={ticket.id} className="bg-zinc-800 hover:bg-gray-800">
+                  <td className="py-2 px-4 border-b">{ticket.id}</td>
+                  <td className="py-2 px-4 border-b">{ticket.customer_username}</td>
+                  <td className="py-2 px-4 border-b">{ticket.title}</td>
+                  <td className="py-2 px-4 border-b">{ticket.body}</td>
+                  <td className="py-2 px-4 border-b">{new Date(ticket.created_at).toLocaleString()}</td>
+                  <td className="py-2 px-4 border-b">{ticket.active ? "Yes" : "No"}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
       ) : (
-        <p>No users found.</p>
+        <p>No tickets found.</p>
       )}
 
       {/* Pagination Controls */}
@@ -125,10 +121,9 @@ const Users = () => {
           Next
         </button>
       </div>
-
-      {/* Add User Button */}
+      
     </div>
   );
 };
 
-export default Users;
+export default Tickets;

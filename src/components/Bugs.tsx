@@ -1,36 +1,33 @@
 import { useApi } from "@/contexts/ApiProvider";
 import React, { useState, useEffect } from "react";
 
-const Users = () => {
-  const [users, setUsers] = useState([]);
+const Bugs = () => {
+  const [bugs, setBugs] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
   const api = useApi();
 
   useEffect(() => {
-    const fetchUsers = async () => {
+    const fetchBugs = async () => {
       try {
         const response = await api.get(
-          `/api/users/?${
-            searchTerm ? `&search=${searchTerm}` : ""
-          }&page=${currentPage}`
+          `/api/bugs/all/?search=${searchTerm}&page=${currentPage}`
         );
         if (response.ok) {
-          setUsers(response.body.results);
-          setTotalPages(Math.ceil(response.body.count / 10)); // Assuming 10 users per page
+          setBugs(response.body.results);
+          setTotalPages(Math.ceil(response.body.count / 10)); // Assuming 10 bugs per page
         } else {
-          console.error("Error fetching users");
+          console.error("Error fetching bugs");
         }
       } catch (error) {
-        console.error("Error fetching users:", error);
+        console.error("Error fetching bugs:", error);
       }
     };
 
-    fetchUsers();
+    fetchBugs();
   }, [api, currentPage, searchTerm]);
 
-  // Handle page change
   const handleNextPage = () => {
     if (currentPage < totalPages) {
       setCurrentPage((prevPage) => prevPage + 1);
@@ -51,60 +48,54 @@ const Users = () => {
   return (
     <div className="p-5 rounded-lg shadow-xl bg-gray-800 text-white">
       <div className="flex justify-center mb-8 items-center gap-4">
-        <h2 className="text-2xl font-bold">Users</h2>
+        <h2 className="text-2xl font-bold">Bugs</h2>
       </div>
 
       <div className="mb-4 w-full flex gap-8">
         <input
           type="text"
-          placeholder="Search users..."
+          placeholder="Search bugs..."
           value={searchTerm}
           onChange={handleSearch}
           className="p-2 w-full rounded bg-gray-700 border border-gray-600 text-white"
         />
-   
-          <button
-            className="bg-cyan-600 text-white w-1/3 rounded"
-            onClick={() =>
-              alert("Functionality to add a new user will be implemented soon.")
-            }
-          >
-            Add New User
-          </button>
-      
+        <button
+          className="bg-cyan-600 text-white w-1/3 rounded"
+          onClick={() =>
+            alert("Functionality to add a new bug will be implemented soon.")
+          }
+        >
+          Add New Bug
+        </button>
       </div>
 
-      {users.length > 0 ? (
+      {bugs.length > 0 ? (
         <div className="overflow-x-auto">
-          <table className="min-w-full bg-gray-900  border border-gray-700 rounded-lg">
+          <table className="min-w-full bg-gray-900 border border-gray-700 rounded-lg">
             <thead>
               <tr className="bg-gray-700 text-start text-gray-200">
                 <th className="py-3 text-start pl-4 border-b">ID</th>
-                <th className="py-3  text-start pl-4 border-b">Username</th>
-                <th className="py-3 text-start pl-4   border-b">Email</th>
-                <th className="py-3 text-start pl-4  border-b">Phone Number</th>
-                <th className="py-3  text-start pl-4  border-b">Serial Number</th>
+                <th className="py-3 text-start pl-4 border-b">Hardware Code</th>
+                <th className="py-3 text-start pl-4 border-b">Software Code</th>
+                <th className="py-3 text-start pl-4 border-b">Bug Text</th>
+                <th className="py-3 text-start pl-4 border-b">Created At</th>
               </tr>
             </thead>
             <tbody>
-              {users.map((user) => (
-                <tr key={user.id} className="bg-zinc-800 hover:bg-gray-800">
-                  <td className="py-2 px-4 border-b">{user.id}</td>
-                  <td className="py-2 px-4 border-b">{user.username}</td>
-                  <td className="py-2 px-4 border-b">{user.email}</td>
-                  <td className="py-2 px-4 border-b">
-                    {user.phone_number || "N/A"}
-                  </td>
-                  <td className="py-2 px-4 border-b">
-                    {user.serial_number || "N/A"}
-                  </td>
+              {bugs.map((bug) => (
+                <tr key={bug.id} className="bg-zinc-800 hover:bg-gray-800">
+                  <td className="py-2 px-4 border-b">{bug.id}</td>
+                  <td className="py-2 px-4 border-b">{bug.hardwareCode}</td>
+                  <td className="py-2 px-4 border-b">{bug.softwareCode}</td>
+                  <td className="py-2 px-4 border-b">{bug.bugTxt}</td>
+                  <td className="py-2 px-4 border-b">{new Date(bug.created_at).toLocaleString()}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
       ) : (
-        <p>No users found.</p>
+        <p>No bugs found.</p>
       )}
 
       {/* Pagination Controls */}
@@ -116,7 +107,7 @@ const Users = () => {
         >
           Prev
         </button>
-
+        
         <button
           onClick={handleNextPage}
           disabled={currentPage === totalPages}
@@ -125,10 +116,8 @@ const Users = () => {
           Next
         </button>
       </div>
-
-      {/* Add User Button */}
     </div>
   );
 };
 
-export default Users;
+export default Bugs;

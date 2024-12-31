@@ -32,7 +32,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, setOpen }) => {
         {
             title: "Users",
             icon: <AiOutlineUser className="w-7 text-gray-400 h-7" />,
-            href: "/users",
+            href: "/dashboard",
         },
         {
             title: "Bugs List",
@@ -66,7 +66,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, setOpen }) => {
 
     return (
         <div
-            className={`hidden md:block ${open ? "w-60" : "w-20"} bg-gradient-to-r from-zinc-800 to-zinc-800 p-5 relative pt-14 duration-300`}
+            className={`hidden md:block ${open ? "w-60" : "w-20"} bg-gradient-to-r from-gray-800 to-gray-800 p-5 relative pt-14 duration-300`}
         >
             <div className="flex -mt-8 items-center">
                 <img

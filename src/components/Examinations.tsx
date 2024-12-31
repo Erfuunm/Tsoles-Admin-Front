@@ -1,33 +1,31 @@
 import { useApi } from "@/contexts/ApiProvider";
 import React, { useState, useEffect } from "react";
 
-const Users = () => {
-  const [users, setUsers] = useState([]);
+const Examinations = () => {
+  const [examinations, setExaminations] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
   const api = useApi();
 
   useEffect(() => {
-    const fetchUsers = async () => {
+    const fetchExaminations = async () => {
       try {
         const response = await api.get(
-          `/api/users/?${
-            searchTerm ? `&search=${searchTerm}` : ""
-          }&page=${currentPage}`
+          `/api/examinations/?${searchTerm ? `search=${searchTerm}&` : ''}page=${currentPage}`
         );
         if (response.ok) {
-          setUsers(response.body.results);
-          setTotalPages(Math.ceil(response.body.count / 10)); // Assuming 10 users per page
+          setExaminations(response.body.results);
+          setTotalPages(Math.ceil(response.body.count / 10)); // Assuming 10 examinations per page
         } else {
-          console.error("Error fetching users");
+          console.error("Error fetching examinations");
         }
       } catch (error) {
-        console.error("Error fetching users:", error);
+        console.error("Error fetching examinations:", error);
       }
     };
 
-    fetchUsers();
+    fetchExaminations();
   }, [api, currentPage, searchTerm]);
 
   // Handle page change
@@ -51,52 +49,57 @@ const Users = () => {
   return (
     <div className="p-5 rounded-lg shadow-xl bg-gray-800 text-white">
       <div className="flex justify-center mb-8 items-center gap-4">
-        <h2 className="text-2xl font-bold">Users</h2>
+        <h2 className="text-2xl font-bold">Examinations</h2>
       </div>
 
       <div className="mb-4 w-full flex gap-8">
         <input
           type="text"
-          placeholder="Search users..."
+          placeholder="Search examinations..."
           value={searchTerm}
           onChange={handleSearch}
           className="p-2 w-full rounded bg-gray-700 border border-gray-600 text-white"
         />
    
-          <button
-            className="bg-cyan-600 text-white w-1/3 rounded"
-            onClick={() =>
-              alert("Functionality to add a new user will be implemented soon.")
-            }
-          >
-            Add New User
-          </button>
-      
+        <button
+          className="bg-cyan-600 text-white w-1/3 rounded"
+          onClick={() =>
+            alert("Functionality to add a new examination will be implemented soon.")
+          }
+        >
+          Add New Examination
+        </button>
       </div>
 
-      {users.length > 0 ? (
+      {examinations.length > 0 ? (
         <div className="overflow-x-auto">
-          <table className="min-w-full bg-gray-900  border border-gray-700 rounded-lg">
+          <table className="min-w-full bg-gray-900 border border-gray-700 rounded-lg">
             <thead>
               <tr className="bg-gray-700 text-start text-gray-200">
                 <th className="py-3 text-start pl-4 border-b">ID</th>
-                <th className="py-3  text-start pl-4 border-b">Username</th>
-                <th className="py-3 text-start pl-4   border-b">Email</th>
-                <th className="py-3 text-start pl-4  border-b">Phone Number</th>
-                <th className="py-3  text-start pl-4  border-b">Serial Number</th>
+                <th className="py-3 text-start pl-4 border-b">Customer Username</th>
+                <th className="py-3 text-start pl-4 border-b">Dataset</th>
+                <th className="py-3 text-start pl-4 border-b">Design Title</th>
+                <th className="py-3 text-start pl-4 border-b">Last UID</th>
+                <th className="py-3 text-start pl-4 border-b">Download Link</th>
               </tr>
             </thead>
             <tbody>
-              {users.map((user) => (
-                <tr key={user.id} className="bg-zinc-800 hover:bg-gray-800">
-                  <td className="py-2 px-4 border-b">{user.id}</td>
-                  <td className="py-2 px-4 border-b">{user.username}</td>
-                  <td className="py-2 px-4 border-b">{user.email}</td>
+              {examinations.map((exam) => (
+                <tr key={exam.id} className="bg-zinc-800 hover:bg-gray-800">
+                  <td className="py-2 px-4 border-b">{exam.id}</td>
+                  <td className="py-2 px-4 border-b">{exam.customer_username}</td>
+                  <td className="py-2 px-4 border-b">{exam.dataset}</td>
+                  <td className="py-2 px-4 border-b">{exam.design_title}</td>
+                  <td className="py-2 px-4 border-b">{exam.last_uid}</td>
                   <td className="py-2 px-4 border-b">
-                    {user.phone_number || "N/A"}
-                  </td>
-                  <td className="py-2 px-4 border-b">
-                    {user.serial_number || "N/A"}
+                    <a 
+                      href={exam.download} 
+                      className="text-cyan-400 hover:underline" 
+                      target="_blank" 
+                      rel="noopener noreferrer">
+                      Download
+                    </a>
                   </td>
                 </tr>
               ))}
@@ -104,7 +107,7 @@ const Users = () => {
           </table>
         </div>
       ) : (
-        <p>No users found.</p>
+        <p>No examinations found.</p>
       )}
 
       {/* Pagination Controls */}
@@ -125,10 +128,8 @@ const Users = () => {
           Next
         </button>
       </div>
-
-      {/* Add User Button */}
     </div>
   );
 };
 
-export default Users;
+export default Examinations;
