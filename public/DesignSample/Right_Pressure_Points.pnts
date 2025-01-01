@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<XMLListPoint xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <points>
+    <Point3D>
+      <X>-70.496487059109427</X>
+      <Y>53.478323644864837</Y>
+      <Z>-0.50000000000017053</Z>
+    </Point3D>
+    <Point3D>
+      <X>-82.169964553715062</X>
+      <Y>-69.974061908331549</Y>
+      <Z>-0.5</Z>
+    </Point3D>
+  </points>
+</XMLListPoint>

@@ -1,6 +1,8 @@
 import { useState } from "react";
 import Sidebar from "@/components/Sidebar";
 import Users from "@/components/Users";
+import STLViewer from "@/components/STLViewer";
+
 
 export default function Dashboard() {
   const [open, setOpen] = useState(true);
@@ -15,7 +17,7 @@ export default function Dashboard() {
 
 
         <div className="flex-1 p-5 "> 
-          <Users />
+       <STLViewer />
         </div>
       </div>
     </div>
