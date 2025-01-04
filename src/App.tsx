@@ -18,6 +18,7 @@ import LogsPage from "./pages/LogsPage";
 import BugsPage from "./pages/BugsPage";
 import TicketsPage from "./pages/TicketsPage";
 import ExaminationPage from "./pages/ExaminationPage";
+import STLViewerPage from "./pages/STLViewerPage";
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated } = useAuth();
@@ -71,7 +72,7 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       />
-        <Route
+      <Route
         path="/tickets"
         element={
           <ProtectedRoute>
@@ -79,11 +80,19 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       />
-            <Route
+      <Route
         path="/examinations"
         element={
           <ProtectedRoute>
             <ExaminationPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/stl-viewer/:id"
+        element={
+          <ProtectedRoute>
+            <STLViewerPage />
           </ProtectedRoute>
         }
       />

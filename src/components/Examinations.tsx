@@ -1,5 +1,6 @@
 import { useApi } from "@/contexts/ApiProvider";
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 const Examinations = () => {
   const [examinations, setExaminations] = useState([]);
@@ -12,7 +13,9 @@ const Examinations = () => {
     const fetchExaminations = async () => {
       try {
         const response = await api.get(
-          `/api/examinations/?${searchTerm ? `search=${searchTerm}&` : ''}page=${currentPage}`
+          `/api/examinations/?${
+            searchTerm ? `search=${searchTerm}&` : ""
+          }page=${currentPage}`
         );
         if (response.ok) {
           setExaminations(response.body.results);
@@ -47,7 +50,7 @@ const Examinations = () => {
   };
 
   return (
-    <div className="p-5 rounded-lg shadow-xl bg-gray-800 text-white">
+    <div className="p-5 rounded-lg shadow-xl bg-zinc-800 text-white">
       <div className="flex justify-center mb-8 items-center gap-4">
         <h2 className="text-2xl font-bold">Examinations</h2>
       </div>
@@ -60,11 +63,13 @@ const Examinations = () => {
           onChange={handleSearch}
           className="p-2 w-full rounded bg-gray-700 border border-gray-600 text-white"
         />
-   
+
         <button
           className="bg-cyan-600 text-white w-1/3 rounded"
           onClick={() =>
-            alert("Functionality to add a new examination will be implemented soon.")
+            alert(
+              "Functionality to add a new examination will be implemented soon."
+            )
           }
         >
           Add New Examination
@@ -77,7 +82,9 @@ const Examinations = () => {
             <thead>
               <tr className="bg-gray-700 text-start text-gray-200">
                 <th className="py-3 text-start pl-4 border-b">ID</th>
-                <th className="py-3 text-start pl-4 border-b">Customer Username</th>
+                <th className="py-3 text-start pl-4 border-b">
+                  Customer Username
+                </th>
                 <th className="py-3 text-start pl-4 border-b">Dataset</th>
                 <th className="py-3 text-start pl-4 border-b">Design Title</th>
                 <th className="py-3 text-start pl-4 border-b">Last UID</th>
@@ -88,18 +95,15 @@ const Examinations = () => {
               {examinations.map((exam) => (
                 <tr key={exam.id} className="bg-zinc-800 hover:bg-gray-800">
                   <td className="py-2 px-4 border-b">{exam.id}</td>
-                  <td className="py-2 px-4 border-b">{exam.customer_username}</td>
+                  <td className="py-2 px-4 border-b">
+                    {exam.customer_username}
+                  </td>
                   <td className="py-2 px-4 border-b">{exam.dataset}</td>
                   <td className="py-2 px-4 border-b">{exam.design_title}</td>
                   <td className="py-2 px-4 border-b">{exam.last_uid}</td>
                   <td className="py-2 px-4 border-b">
-                    <a 
-                      href={exam.download} 
-                      className="text-cyan-400 hover:underline" 
-                      target="_blank" 
-                      rel="noopener noreferrer">
-                      Download
-                    </a>
+             
+                    <Link to={`/stl-viewer/${exam.id}`}>see</Link>
                   </td>
                 </tr>
               ))}

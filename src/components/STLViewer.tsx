@@ -5,7 +5,7 @@ import { MdOutlineDesignServices } from "react-icons/md";
 import { useApi } from "@/contexts/ApiProvider";
 import { LuSettings2 } from "react-icons/lu";
 
-function STLViewer() {
+function STLViewer({id}) {
   const canvasRef = useRef(null);
   const [stlFiles, setStlFiles] = useState([]);
   const [stlFilesVisibility, setStlFilesVisibility] = useState({});
@@ -15,6 +15,8 @@ function STLViewer() {
   const [rightShoeVisibility, setRightShoeVisibility] = useState(1);
   const [leftShoeColor, setLeftShoeColor] = useState("#FFFFFF");
   const [rightShoeColor, setRightShoeColor] = useState("#FFFFFF");
+  const [leftSkeletonColor, setLeftSkeletonColor] = useState("#FFFFFF");
+  const [rightSkeletonColor, setRightSkeletonColor] = useState("#FFFFFF");
   const api = useApi();
   const engineRef = useRef(null);
   const sceneRef = useRef(null);
@@ -26,15 +28,31 @@ function STLViewer() {
 
     const createScene = () => {
       const scene = new BABYLON.Scene(engine);
-      scene.clearColor = new BABYLON.Color4(0.3, 0.3, 0.3, 1);
+      scene.clearColor = new BABYLON.Color4(0.15, 0.15, 0.16, 1);
+
       const camera = new BABYLON.ArcRotateCamera(
         "camera1",
-        Math.PI / 2,
-        Math.PI / 2,
-        2,
-        BABYLON.Vector3.Zero(),
+        Math.PI / 2, // Alpha
+        Math.PI / 3, // Beta (adjusted for a better view angle)
+        4, // Radius (distance from the target)
+        BABYLON.Vector3.Zero(), // Target
         scene
       );
+
+      // Set limits on zooming
+      camera.upperRadiusLimit = 800;
+      camera.lowerRadiusLimit = 50;
+
+      // Set angles limits
+      camera.lowerBetaLimit = 0.1;
+      camera.upperBetaLimit = Math.PI - 0.1;
+
+      // Enable camera inertia
+      camera.inertia = 0.9;
+
+      // Optional: Set the initial camera position
+      camera.setPosition(new BABYLON.Vector3(-300, 352, -450));
+
       camera.attachControl(canvas, true);
       addLights(scene);
 
@@ -63,16 +81,16 @@ function STLViewer() {
   useEffect(() => {
     const fetchStlFiles = async () => {
       try {
-        const response = await api.get("/api/examinations/11/fetch-stl/");
+        const response = await api.get(`/api/examinations/${id}/fetch-stl/`);
         const files = response.body.files;
 
         const visibility = {};
         files.forEach((file) => {
-          visibility[file.filename] = true; 
+          visibility[file.filename] = true;
         });
 
         setStlFiles(files);
-        setStlFilesVisibility(visibility); 
+        setStlFilesVisibility(visibility);
         loadStlFiles(files);
       } catch (error) {
         console.error("Error fetching STL files:", error);
@@ -93,28 +111,47 @@ function STLViewer() {
         sceneRef.current,
         (meshes) => {
           meshes.forEach((mesh) => {
-            mesh.name = file.filename; 
+            mesh.name = file.filename;
 
-            const material = new BABYLON.StandardMaterial(mesh.name + "Material", sceneRef.current);
+            const material = new BABYLON.StandardMaterial(
+              mesh.name + "Material",
+              sceneRef.current
+            );
             material.diffuseColor = new BABYLON.Color3(1, 1, 1); // Default color
 
+
             if (file.filename === "Right_InternalStructure_Hollow.STL") {
-              const texture = new BABYLON.Texture("/DesignSample/PressureImageRight.JPG", sceneRef.current);
+              const texture = new BABYLON.Texture(
+                "/DesignSample/PressureImageRight.JPG",
+                sceneRef.current
+              );
               texture.vAng = Math.PI - 0.16;
               texture.uAng = Math.PI + 0.19;
               texture.wAng = (-10 * Math.PI) / 180;
               texture.vOffset = 0.56;
               material.diffuseTexture = texture;
             } else if (file.filename === "Left_InternalStructure_Hollow.STL") {
-              const texture = new BABYLON.Texture("/DesignSample/PressureImageLeft.JPG", sceneRef.current);
+              const texture = new BABYLON.Texture(
+                "/DesignSample/PressureImageLeft.JPG",
+                sceneRef.current
+              );
               texture.wAng = Math.PI;
               texture.vOffset = 0.35;
               texture.uOffset = -0.2;
               material.diffuseTexture = texture;
             }
+            // Set colors for skeleton models
+            else if (file.filename === "Right_Skeleton.STL") {
+              material.diffuseColor =
+                BABYLON.Color3.FromHexString(rightSkeletonColor);
+            } else if (file.filename === "Left_Skeleton.STL") {
+              material.diffuseColor =
+                BABYLON.Color3.FromHexString(leftSkeletonColor);
+            }
 
             mesh.material = material;
             generatePlanarUVs(mesh);
+            
           });
         },
         null,
@@ -139,7 +176,9 @@ function STLViewer() {
   const handleToggleLeftPressureImage = () => {
     setShowLeftPressureImage((prev) => {
       const newState = !prev;
-      const leftMesh = sceneRef.current.getMeshByName("Left_InternalStructure_Hollow.STL");
+      const leftMesh = sceneRef.current.getMeshByName(
+        "Left_InternalStructure_Hollow.STL"
+      );
       if (leftMesh) {
         leftMesh.material.alpha = newState ? 1 : 0;
       }
@@ -150,7 +189,9 @@ function STLViewer() {
   const handleToggleRightPressureImage = () => {
     setShowRightPressureImage((prev) => {
       const newState = !prev;
-      const rightMesh = sceneRef.current.getMeshByName("Right_InternalStructure_Hollow.STL");
+      const rightMesh = sceneRef.current.getMeshByName(
+        "Right_InternalStructure_Hollow.STL"
+      );
       if (rightMesh) {
         rightMesh.material.alpha = newState ? 1 : 0;
       }
@@ -179,7 +220,8 @@ function STLViewer() {
     setLeftShoeColor(newColor);
     const leftShoeMesh = sceneRef.current.getMeshByName("Left_FootShoe.STL");
     if (leftShoeMesh && leftShoeMesh.material) {
-      leftShoeMesh.material.diffuseColor = BABYLON.Color3.FromHexString(newColor); // Change color
+      leftShoeMesh.material.diffuseColor =
+        BABYLON.Color3.FromHexString(newColor); // Change color
       leftShoeMesh.material.needsRefresh = true; // Notify Babylon to refresh the material
     }
   };
@@ -189,8 +231,33 @@ function STLViewer() {
     setRightShoeColor(newColor);
     const rightShoeMesh = sceneRef.current.getMeshByName("Right_FootShoe.STL");
     if (rightShoeMesh && rightShoeMesh.material) {
-      rightShoeMesh.material.diffuseColor = BABYLON.Color3.FromHexString(newColor); // Change color
+      rightShoeMesh.material.diffuseColor =
+        BABYLON.Color3.FromHexString(newColor); // Change color
       rightShoeMesh.material.needsRefresh = true; // Notify Babylon to refresh the material
+    }
+  };
+
+  const handleLeftSkeletonColorChange = (event) => {
+    const newColor = event.target.value;
+    setLeftSkeletonColor(newColor);
+    const leftSkeletonMesh =
+      sceneRef.current.getMeshByName("Left_Skeleton.STL");
+    if (leftSkeletonMesh && leftSkeletonMesh.material) {
+      leftSkeletonMesh.material.diffuseColor =
+        BABYLON.Color3.FromHexString(newColor);
+      leftSkeletonMesh.material.needsRefresh = true; // Notify Babylon to refresh the material
+    }
+  };
+
+  const handleRightSkeletonColorChange = (event) => {
+    const newColor = event.target.value;
+    setRightSkeletonColor(newColor);
+    const rightSkeletonMesh =
+      sceneRef.current.getMeshByName("Right_Skeleton.STL");
+    if (rightSkeletonMesh && rightSkeletonMesh.material) {
+      rightSkeletonMesh.material.diffuseColor =
+        BABYLON.Color3.FromHexString(newColor);
+      rightSkeletonMesh.material.needsRefresh = true; // Notify Babylon to refresh the material
     }
   };
 
@@ -207,12 +274,20 @@ function STLViewer() {
   };
 
   const addLights = (scene) => {
-    const light1 = new BABYLON.DirectionalLight("light1", new BABYLON.Vector3(1, -1, 1), scene);
+    const light1 = new BABYLON.DirectionalLight(
+      "light1",
+      new BABYLON.Vector3(1, -1, 1),
+      scene
+    );
     light1.position.set(0, 0, 0);
     light1.diffuse = new BABYLON.Color3(204 / 255, 204 / 255, 204 / 255);
     light1.specular = new BABYLON.Color3(63 / 255, 63 / 255, 63 / 255);
 
-    const light2 = new BABYLON.DirectionalLight("light2", new BABYLON.Vector3(-1, -1, 0.5), scene);
+    const light2 = new BABYLON.DirectionalLight(
+      "light2",
+      new BABYLON.Vector3(-1, -1, 0.5),
+      scene
+    );
     light2.position.set(0, 0, 0);
     light2.diffuse = new BABYLON.Color3(63 / 255, 63 / 255, 63 / 255);
     light2.specular = new BABYLON.Color3(0, 0, 0);
@@ -234,14 +309,14 @@ function STLViewer() {
       </div>
       <div className="flex flex-row-reverse items-center justify-center gap-10 ">
         <div className="flex items-center justify-between p-8 rounded-lg gap-6">
-          <div className="flex flex-col space-y-2 bg-zinc-800 p-8">
+          <div className="flex flex-col space-y-2 bg-zinc-800 p-8 rounded-lg shadow-2xl">
             <div className="flex justify-center items-center gap-4 mb-4">
               <div className="w-20 md:w-20 h-[0.5px] bg-sky-400"></div>
               <h1 className="text-xl text-center text-white font-bold">Left</h1>
               <div className="w-20 md:w-20 h-[0.5px] bg-sky-400"></div>
             </div>
 
-            <div className="flex items-center gap-2 text-white">
+            <div className="flex items-center gap-2 text-white pb-2">
               <MdOutlineDesignServices className="h-6 w-6 text-sky-500" />{" "}
               Automatic insole design :
             </div>
@@ -261,11 +336,6 @@ function STLViewer() {
               </div>
             ))}
 
-            <div className="flex items-center gap-2 text-white">
-              <LuSettings2 className="h-6 w-6 text-sky-500" /> Edit design
-              structure :
-            </div>
-
             <label className="ml-8 flex items-center cursor-pointer mb-2">
               <input
                 type="checkbox"
@@ -280,8 +350,13 @@ function STLViewer() {
               </span>
             </label>
 
+            <div className="flex items-center gap-2 text-white pt-2 pb-2">
+              <LuSettings2 className="h-6 w-6 text-sky-500" /> Edit design
+              structure :
+            </div>
+
             {/* Slider for Left Foot Shoe Visibility */}
-            <div className="flex flex-col">
+            <div className="ml-8 flex flex-col w-2/3">
               <label className="text-white">Left Foot Shoe Visibility:</label>
               <input
                 type="range"
@@ -289,13 +364,15 @@ function STLViewer() {
                 max="1"
                 step="0.1"
                 value={leftShoeVisibility}
-                onChange={(e) => handleLeftShoeVisibilityChange(Number(e.target.value))}
-                className="mt-2"
+                onChange={(e) =>
+                  handleLeftShoeVisibilityChange(Number(e.target.value))
+                }
+                className="mt-2 hover:cursor-grabbing"
               />
             </div>
 
             {/* Color Picker for Left Foot Shoe */}
-            <div className="flex flex-col">
+            <div className="ml-8 flex flex-col">
               <label className="text-white">Left Foot Shoe Color:</label>
               <input
                 type="color"
@@ -304,13 +381,24 @@ function STLViewer() {
                 className="mt-2"
               />
             </div>
+
+            {/* Color Picker for Left Skeleton Color */}
+            <div className="ml-8 flex flex-col">
+              <label className="text-white">Left Skeleton Color:</label>
+              <input
+                type="color"
+                value={leftSkeletonColor}
+                onChange={handleLeftSkeletonColorChange}
+                className="mt-2"
+              />
+            </div>
           </div>
           <canvas
-            className="mx-auto border-2 border-gray-300 bg-white"
-            style={{ width: "800px", height: "450px" }}
+            className="mx-auto border border-zinc-400 rounded-md p-2 bg-zinc-800"
+            style={{ width: "800px", height: "450px", borderRadius: "13px" }}
             ref={canvasRef}
           />
-          <div className="flex flex-col h-full space-y-2 bg-zinc-800 p-8">
+          <div className="flex flex-col h-full space-y-2 bg-zinc-800 p-8 rounded-lg shadow-2xl">
             <div className="flex justify-center items-center gap-4 mb-4">
               <div className="w-20 md:w-20 h-[0.5px] bg-sky-400"></div>
               <h1 className="text-xl text-center text-white font-bold">
@@ -319,12 +407,15 @@ function STLViewer() {
               <div className="w-20 md:w-20 h-[0.5px] bg-sky-400"></div>
             </div>
 
-            <div className="flex items-center gap-2 text-white">
+            <div className="flex items-center gap-2 text-white pb-2">
               <MdOutlineDesignServices className="h-6 w-6 text-sky-500" />{" "}
               Automatic insole design :
             </div>
             {rightGroup.map((file) => (
-              <div key={file.filename} className="pl-8 mt-4 mb-4 flex items-center">
+              <div
+                key={file.filename}
+                className="pl-8 mt-4 mb-4 flex items-center"
+              >
                 <label className="flex items-center cursor-pointer">
                   <input
                     type="checkbox"
@@ -338,11 +429,8 @@ function STLViewer() {
                 </label>
               </div>
             ))}
-            <div className="flex items-center gap-2 text-white">
-              <LuSettings2 className="h-6 w-6 text-sky-500" /> Edit design
-              structure :
-            </div>
-            <label className="ml-8 flex items-center cursor-pointer mb-2">
+
+            <label className="ml-8 flex items-center cursor-pointer  ">
               <input
                 type="checkbox"
                 checked={showRightPressureImage}
@@ -356,8 +444,13 @@ function STLViewer() {
               </span>
             </label>
 
+            <div className="flex items-center gap-2 text-white pb-2 pt-2 ">
+              <LuSettings2 className="h-6 w-6 text-sky-500" /> Edit design
+              structure :
+            </div>
+
             {/* Slider for Right Foot Shoe Visibility */}
-            <div className="flex flex-col">
+            <div className="ml-8 flex flex-col w-2/3">
               <label className="text-white">Right Foot Shoe Visibility:</label>
               <input
                 type="range"
@@ -365,18 +458,31 @@ function STLViewer() {
                 max="1"
                 step="0.1"
                 value={rightShoeVisibility}
-                onChange={(e) => handleRightShoeVisibilityChange(Number(e.target.value))}
-                className="mt-2"
+                onChange={(e) =>
+                  handleRightShoeVisibilityChange(Number(e.target.value))
+                }
+                className="mt-2 hover:cursor-grabbing"
               />
             </div>
 
             {/* Color Picker for Right Foot Shoe */}
-            <div className="flex flex-col">
+            <div className="ml-8 flex flex-col">
               <label className="text-white">Right Foot Shoe Color:</label>
               <input
                 type="color"
                 value={rightShoeColor}
                 onChange={handleRightShoeColorChange}
+                className="mt-2"
+              />
+            </div>
+
+            {/* Color Picker for Right Skeleton Color */}
+            <div className="ml-8 flex flex-col">
+              <label className="text-white">Right Skeleton Color:</label>
+              <input
+                type="color"
+                value={rightSkeletonColor}
+                onChange={handleRightSkeletonColorChange}
                 className="mt-2"
               />
             </div>

@@ -31,32 +31,32 @@ const Sidebar: React.FC<SidebarProps> = ({ open, setOpen }) => {
     const Menus: Menu[] = [
         {
             title: "Users",
-            icon: <AiOutlineUser className="w-7 text-gray-400 h-7" />,
+            icon: <AiOutlineUser className="w-7 text-sky-500 h-7" />,
             href: "/dashboard",
         },
         {
             title: "Bugs List",
-            icon: <BsBug className="w-7 text-gray-400 h-7" />,
+            icon: <BsBug className="w-7 text-sky-500 h-7" />,
             href: "/bugs",
         },
         {
             title: "Logs List ",
-            icon: <PiFediverseLogo className="w-7 text-gray-400 h-7" />,
+            icon: <PiFediverseLogo className="w-7 text-sky-500 h-7" />,
             href: "/logs",
         },
         {
             title: "Tickets List",
-            icon: <MdOutlineNotifications className="w-7 text-gray-400 h-7" />,
+            icon: <MdOutlineNotifications className="w-7 text-sky-500 h-7" />,
             href: "/tickets",
         },
         {
             title: "Examinations",
-            icon: <HiOutlineClipboardList className="w-7 text-gray-400 h-7" />,
+            icon: <HiOutlineClipboardList className="w-7 text-sky-500 h-7" />,
             href: "/examinations",
         },
         {
             title: "Settings",
-            icon: <LuSettings className="w-7 text-gray-400 h-7" />,
+            icon: <LuSettings className="w-7 text-sky-500 h-7" />,
             href: "/settings",
         },
     ];
@@ -102,7 +102,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, setOpen }) => {
                     className={`flex rounded-md p-2 mb-8 cursor-pointer hover:bg-light-white text-gray-300 text-lg items-center gap-x-4  `}
                     onClick={logout}
                 >
-                    <BiLogOutCircle className="w-7 text-mainColor text-gray-400 h-7" />
+                    <BiLogOutCircle className="w-7 text-mainColor text-sky-500 h-7" />
                     <span className={`${!open && "hidden"} origin-left text-gray-100 duration-200`}>
                        Log out
                     </span>
