@@ -304,12 +304,12 @@ function STLViewer({id}) {
     <div className="flex flex-col items-center justify-center min-h-full p-4">
       <div className="flex items-center gap-4 -mt-20 mb-14">
         <div className="w-20 md:w-64 h-[0.5px] bg-zinc-400"></div>
-        <h1 className="text-xl text-center text-white font-bold">STL Viewer</h1>
+        <h1 className="text-xl text-center dark:text-white font-bold">STL Viewer</h1>
         <div className="w-20 md:w-64 h-[0.5px] bg-zinc-400"></div>
       </div>
       <div className="flex flex-row-reverse items-center justify-center gap-10 ">
         <div className="flex items-center justify-between p-8 rounded-lg gap-6">
-          <div className="flex flex-col space-y-2 bg-zinc-800 p-8 rounded-lg shadow-2xl">
+          <div className="flex flex-col space-y-2 bg-[#7D7C7D] dark:bg-zinc-800 p-8 rounded-lg shadow-2xl">
             <div className="flex justify-center items-center gap-4 mb-4">
               <div className="w-20 md:w-20 h-[0.5px] bg-sky-400"></div>
               <h1 className="text-xl text-center text-white font-bold">Left</h1>
@@ -398,7 +398,7 @@ function STLViewer({id}) {
             style={{ width: "800px", height: "450px", borderRadius: "13px" }}
             ref={canvasRef}
           />
-          <div className="flex flex-col h-full space-y-2 bg-zinc-800 p-8 rounded-lg shadow-2xl">
+          <div className="flex flex-col h-full space-y-2 bg-[#7D7C7D] dark:bg-zinc-800 p-8 rounded-lg shadow-2xl">
             <div className="flex justify-center items-center gap-4 mb-4">
               <div className="w-20 md:w-20 h-[0.5px] bg-sky-400"></div>
               <h1 className="text-xl text-center text-white font-bold">

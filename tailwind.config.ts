@@ -1,7 +1,7 @@
 import type { Config } from "tailwindcss";
 
 export default {
-  darkMode: ["class"],
+  darkMode: 'class',  // Corrected the darkMode setting to a string
   content: [
     "./pages/**/*.{ts,tsx}",
     "./components/**/*.{ts,tsx}",
@@ -25,11 +25,11 @@ export default {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "#3b5df6",
+          DEFAULT: "#27272A",
           foreground: "#ffffff",
         },
         secondary: {
-          DEFAULT: "#144272",
+          DEFAULT: "#bdb7b7",
           foreground: "#ffffff",
         },
         accent: {

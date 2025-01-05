@@ -50,7 +50,7 @@ const Examinations = () => {
   };
 
   return (
-    <div className="p-5 rounded-lg shadow-xl bg-zinc-800 text-white">
+    <div className="p-5 rounded-lg shadow-xl bg-[#7D7C7D] dark:bg-primary text-white">
       <div className="flex justify-center mb-8 items-center gap-4">
         <h2 className="text-2xl font-bold">Examinations</h2>
       </div>
@@ -61,11 +61,11 @@ const Examinations = () => {
           placeholder="Search examinations..."
           value={searchTerm}
           onChange={handleSearch}
-          className="p-2 w-full rounded bg-gray-700 border border-gray-600 text-white"
+          className="p-2 w-full rounded dark:bg-gray-700 border border-gray-600 text-white"
         />
 
         <button
-          className="bg-cyan-600 text-white w-1/3 rounded"
+          className="bg-[#036597] dark:bg-cyan-600 text-white w-1/3 rounded"
           onClick={() =>
             alert(
               "Functionality to add a new examination will be implemented soon."
@@ -78,9 +78,9 @@ const Examinations = () => {
 
       {examinations.length > 0 ? (
         <div className="overflow-x-auto">
-          <table className="min-w-full bg-gray-900 border border-gray-700 rounded-lg">
+          <table className="min-w-full bg-gray-900 border border-white rounded-lg">
             <thead>
-              <tr className="bg-gray-700 text-start text-gray-200">
+              <tr className=" bg-[#AEDFF8] dark:bg-gray-700 text-start text-primary dark:text-gray-200">
                 <th className="py-3 text-start pl-4 border-b">ID</th>
                 <th className="py-3 text-start pl-4 border-b">
                   Customer Username
@@ -93,15 +93,15 @@ const Examinations = () => {
             </thead>
             <tbody>
               {examinations.map((exam) => (
-                <tr key={exam.id} className="bg-zinc-800 hover:bg-gray-800">
-                  <td className="py-2 px-4 border-b">{exam.id}</td>
-                  <td className="py-2 px-4 border-b">
+                <tr key={exam.id} className="bg-[#62686b] dark:bg-zinc-800 hover:bg-gray-500 hover:dark:bg-gray-800">
+                  <td className="py-2 px-4 border-b border-white">{exam.id}</td>
+                  <td className="py-2 px-4 border-b border-white">
                     {exam.customer_username}
                   </td>
-                  <td className="py-2 px-4 border-b">{exam.dataset}</td>
-                  <td className="py-2 px-4 border-b">{exam.design_title}</td>
-                  <td className="py-2 px-4 border-b">{exam.last_uid}</td>
-                  <td className="py-2 px-4 border-b">
+                  <td className="py-2 px-4 border-b border-white">{exam.dataset}</td>
+                  <td className="py-2 px-4 border-b border-white">{exam.design_title}</td>
+                  <td className="py-2 px-4 border-b border-white">{exam.last_uid}</td>
+                  <td className="py-2 px-4 border-b border-white">
              
                     <Link to={`/stl-viewer/${exam.id}`}>see</Link>
                   </td>
@@ -119,7 +119,7 @@ const Examinations = () => {
         <button
           onClick={handlePrevPage}
           disabled={currentPage === 1}
-          className="bg-cyan-600 text-white py-2 px-4 rounded disabled:bg-gray-600"
+          className="bg-cyan-600 text-white py-2 px-4 rounded disabled:bg-[#036597] disabled:dark:bg-gray-600 disabled:opacity-60"
         >
           Prev
         </button>
@@ -127,7 +127,7 @@ const Examinations = () => {
         <button
           onClick={handleNextPage}
           disabled={currentPage === totalPages}
-          className="bg-cyan-600 text-white py-2 px-4 rounded disabled:bg-gray-600"
+          className="bg-cyan-600  text-white py-2 px-4 rounded disabled:bg-[#036597] disabled:dark:bg-gray-600 disabled:opacity-60"
         >
           Next
         </button>

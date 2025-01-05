@@ -14,7 +14,7 @@ export default function STLViewerPage() {
       {" "}
       {/* Set height of the flex container */}
       <Sidebar open={open} setOpen={setOpen} />
-      <div className="flex-1 flex flex-col  min-h-screen bg-gradient-to-b from-zinc-900 to-zinc-900">
+      <div className="flex-1 flex flex-col  min-h-screen bg-white dark:bg-zinc-900">
         <div className="md:hidden">{/* <Header /> */}</div>
 
 
