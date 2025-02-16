@@ -217,6 +217,7 @@ function STLViewer({ id }) {
 
   useEffect(() => {
     const fetchStlFiles = async () => {
+      
       try {
         const response = await api.get(`/api/examinations/${id}/fetch-stl/`);
         const files = response.body.files;
@@ -237,65 +238,44 @@ function STLViewer({ id }) {
     fetchStlFiles();
   }, [api]);
 
-  const loadStlFiles = (files) => {
+  const loadStlFiles = async (files) => {
     if (!sceneRef.current) return;
 
-    files.forEach((file) => {
-      BABYLON.SceneLoader.ImportMesh(
-        "",
-        "",
-        file.download_link,
-        sceneRef.current,
-        (meshes) => {
-          meshes.forEach((mesh) => {
-            mesh.name = file.filename;
+    for (const file of files) {
+        try {
+            const response = await fetch(`/api/download-stl?filename=${encodeURIComponent(file.filename)}`, {
+                method: 'GET',
+            });
 
-            const material = new BABYLON.StandardMaterial(
-              mesh.name + "Material",
-              sceneRef.current
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const blob = await response.blob();
+            const download_link = URL.createObjectURL(blob); // Create a temporary URL for the blob
+
+            BABYLON.SceneLoader.ImportMesh(
+                "",
+                "",
+                download_link, // Use the blob's URL
+                sceneRef.current,
+                (meshes) => {
+                    meshes.forEach((mesh) => {
+                        mesh.name = file.filename;
+                        // ... (rest of your mesh processing)
+                    });
+                },
+                null,
+                (scene, message, exception) => {
+                    console.error("Error loading STL file:", message, exception);
+                }
             );
-            material.diffuseColor = new BABYLON.Color3(1, 1, 1); // Default color
 
-            if (file.filename === "Right_InternalStructure_Hollow.STL") {
-              const texture = new BABYLON.Texture(
-                "/DesignSample/PressureImageRight.JPG",
-                sceneRef.current
-              );
-              texture.vAng = Math.PI - 0.16;
-              texture.uAng = Math.PI + 0.19;
-              texture.wAng = (-10 * Math.PI) / 180;
-              texture.vOffset = 0.56;
-              material.diffuseTexture = texture;
-            } else if (file.filename === "Left_InternalStructure_Hollow.STL") {
-              const texture = new BABYLON.Texture(
-                "/DesignSample/PressureImageLeft.JPG",
-                sceneRef.current
-              );
-              texture.wAng = Math.PI;
-              texture.vOffset = 0.35;
-              texture.uOffset = -0.2;
-              material.diffuseTexture = texture;
-            }
-            // Set colors for skeleton models
-            else if (file.filename === "Right_Skeleton.STL") {
-              material.diffuseColor =
-                BABYLON.Color3.FromHexString(rightSkeletonColor);
-            } else if (file.filename === "Left_Skeleton.STL") {
-              material.diffuseColor =
-                BABYLON.Color3.FromHexString(leftSkeletonColor);
-            }
-
-            mesh.material = material;
-            generatePlanarUVs(mesh);
-          });
-        },
-        null,
-        (scene, message, exception) => {
-          console.error("Error loading STL file:", message, exception);
+        } catch (error) {
+            console.error(`Error downloading and importing ${file.filename}:`, error);
         }
-      );
-    });
-  };
+    }
+};
 
   const handleToggleVisibility = (filename) => {
     setStlFilesVisibility((prevState) => {

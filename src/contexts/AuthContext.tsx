@@ -29,7 +29,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const refreshAccessToken = async () => {
     try {
-      const response = await fetch("http://127.0.0.1:8000//api/token/refresh/", {
+      const response = await fetch("https://tsolesback.runflare.run/api/token/refresh/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -62,7 +62,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const login = async (email: string, password: string) => {
     try {
       
-      const response = await fetch("http://127.0.0.1:8000/api/token/", {
+      const response = await fetch("https://tsolesback.runflare.run/api/token/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -88,7 +88,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const signup = async (email: string, password: string, firstName: string, lastName: string) => {
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/register/", {
+      const response = await fetch("https://tsolesback.runflare.run/api/register/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
