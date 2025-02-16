@@ -10,6 +10,7 @@ const Logs = () => {
 
   useEffect(() => {
     const fetchLogs = async () => {
+      
       try {
         const response = await api.get(
           `/api/logs/all/?${searchTerm ? `&search=${searchTerm}` : ''}&page=${currentPage}`
@@ -47,7 +48,7 @@ const Logs = () => {
   };
 
   return (
-    <div className="p-5 rounded-lg shadow-xl bg-gray-800 text-white">
+    <div className="p-5 rounded-lg shadow-xl bg-[#7D7C7D] dark:bg-primary text-white">
       <div className="flex justify-center mb-8 items-center gap-4">
         <h2 className="text-2xl font-bold">Logs</h2>
       </div>
@@ -73,9 +74,9 @@ const Logs = () => {
 
       {logs.length > 0 ? (
         <div className="overflow-x-auto">
-          <table className="min-w-full bg-gray-900 border border-gray-700 rounded-lg">
+          <table className="min-w-full bg-gray-900 border border-white rounded-lg">
             <thead>
-              <tr className="bg-gray-700 text-start text-gray-200">
+              <tr className="bg-[#AEDFF8] dark:bg-gray-700 text-start text-primary dark:text-gray-200">
                 <th className="py-3 text-start pl-4 border-b">ID</th>
                 <th className="py-3 text-start pl-4 border-b">Hardware Code</th>
                 <th className="py-3 text-start pl-4 border-b">Software Code</th>
@@ -85,12 +86,12 @@ const Logs = () => {
             </thead>
             <tbody>
               {logs.map((log) => (
-                <tr key={log.id} className="bg-zinc-800 hover:bg-gray-800">
-                  <td className="py-2 px-4 border-b">{log.id}</td>
-                  <td className="py-2 px-4 border-b">{log.hardwareCode}</td>
-                  <td className="py-2 px-4 border-b">{log.softwareCode}</td>
-                  <td className="py-2 px-4 border-b">{log.logTxt}</td>
-                  <td className="py-2 px-4 border-b">{new Date(log.created_at).toLocaleString()}</td>
+                <tr key={log.id} className="bg-[#62686b] dark:bg-zinc-800 hover:bg-gray-500 hover:dark:bg-gray-800">
+                  <td className="py-2 px-4 border-b border-white">{log.id}</td>
+                  <td className="py-2 px-4 border-b border-white">{log.hardwareCode}</td>
+                  <td className="py-2 px-4 border-b border-white">{log.softwareCode}</td>
+                  <td className="py-2 px-4 border-b border-white">{log.logTxt}</td>
+                  <td className="py-2 px-4 border-b border-white">{new Date(log.created_at).toLocaleString()}</td>
                 </tr>
               ))}
             </tbody>

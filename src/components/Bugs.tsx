@@ -34,6 +34,7 @@ const Bugs = () => {
     }
   };
 
+
   const handlePrevPage = () => {
     if (currentPage > 1) {
       setCurrentPage((prevPage) => prevPage - 1);
@@ -46,7 +47,7 @@ const Bugs = () => {
   };
 
   return (
-    <div className="p-5 rounded-lg shadow-xl bg-gray-800 text-white">
+    <div className="p-5 rounded-lg shadow-xl bg-[#7D7C7D] dark:bg-primary text-white">
       <div className="flex justify-center mb-8 items-center gap-4">
         <h2 className="text-2xl font-bold">Bugs</h2>
       </div>
@@ -71,9 +72,9 @@ const Bugs = () => {
 
       {bugs.length > 0 ? (
         <div className="overflow-x-auto">
-          <table className="min-w-full bg-gray-900 border border-gray-700 rounded-lg">
+          <table className="min-w-full bg-gray-700 border border-white rounded-lg">
             <thead>
-              <tr className="bg-gray-700 text-start text-gray-200">
+              <tr className="bg-[#AEDFF8] dark:bg-gray-700 text-start text-primary dark:text-gray-200">
                 <th className="py-3 text-start pl-4 border-b">ID</th>
                 <th className="py-3 text-start pl-4 border-b">Hardware Code</th>
                 <th className="py-3 text-start pl-4 border-b">Software Code</th>
@@ -83,12 +84,12 @@ const Bugs = () => {
             </thead>
             <tbody>
               {bugs.map((bug) => (
-                <tr key={bug.id} className="bg-zinc-800 hover:bg-gray-800">
-                  <td className="py-2 px-4 border-b">{bug.id}</td>
-                  <td className="py-2 px-4 border-b">{bug.hardwareCode}</td>
-                  <td className="py-2 px-4 border-b">{bug.softwareCode}</td>
-                  <td className="py-2 px-4 border-b">{bug.bugTxt}</td>
-                  <td className="py-2 px-4 border-b">{new Date(bug.created_at).toLocaleString()}</td>
+                <tr key={bug.id} className="bg-[#62686b] dark:bg-zinc-800 hover:bg-gray-500 hover:dark:bg-gray-800">
+                  <td className="py-2 px-4 border-b border-white">{bug.id}</td>
+                  <td className="py-2 px-4 border-b border-white">{bug.hardwareCode}</td>
+                  <td className="py-2 px-4 border-b border-white">{bug.softwareCode}</td>
+                  <td className="py-2 px-4 border-b border-white">{bug.bugTxt}</td>
+                  <td className="py-2 px-4 border-b border-white">{new Date(bug.created_at).toLocaleString()}</td>
                 </tr>
               ))}
             </tbody>

@@ -1,4 +1,4 @@
-const BASE_API_URL: string = 'http://127.0.0.1:8000';
+const BASE_API_URL: string = 'https://tsolesback.runflare.run';
 
 interface RequestOptions {
     method: string;

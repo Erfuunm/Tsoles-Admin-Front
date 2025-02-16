@@ -78,7 +78,7 @@ const Examinations = () => {
 
       {examinations.length > 0 ? (
         <div className="overflow-x-auto">
-          <table className="min-w-full bg-gray-900 border border-white rounded-lg">
+          <table className="min-w-full bg-gray-700 border border-white  rounded-lg">
             <thead>
               <tr className=" bg-[#AEDFF8] dark:bg-gray-700 text-start text-primary dark:text-gray-200">
                 <th className="py-3 text-start pl-4 border-b">ID</th>

@@ -5,7 +5,151 @@ import { MdOutlineDesignServices } from "react-icons/md";
 import { useApi } from "@/contexts/ApiProvider";
 import { LuSettings2 } from "react-icons/lu";
 
-function STLViewer({id}) {
+function ShoeSection({
+  title,
+  group,
+  stlFilesVisibility,
+  handleToggleVisibility,
+  showPressureImage,
+  togglePressureImage,
+  shoeVisibility,
+  handleShoeVisibilityChange,
+  shoeColor,
+  handleShoeColorChange,
+  skeletonColor,
+  handleSkeletonColorChange,
+  isTitle,
+  isRight,
+}) {
+  const items = ["InternalStructure", "FootShoe", "Skeleton", "Floor", "Roof"];
+
+  return (
+    <div className="flex flex-col space-y-2 p-8 ">
+      {isTitle ? (
+        <div className="flex items-center gap-2 text-white pb-2">
+          <MdOutlineDesignServices className="h-6 w-6 text-sky-500" />
+          Automatic insole design:
+        </div>
+      ) : (
+        <div className="flex items-center gap-2 text-white pb-2">
+          <MdOutlineDesignServices className="h-6 w-6 text-primary" />
+        </div>
+      )}
+
+      <div className="flex   ">
+        <div className="flex flex-col gap-1">
+          {!isRight ? (
+            <>
+              <span className="text-gray-300">{items[0]}</span>
+              <span className="text-gray-300">{items[1]}</span>
+              <span className="text-gray-300">{items[2]}</span>
+              <span className="text-gray-300">{items[3]}</span>
+              <span className="text-gray-300">{items[4]}</span>
+            </>
+          ) : null}
+        </div>
+
+        <div className="flex  flex-col gap-1">
+          {group.map((file, index) => (
+            <div
+              key={file.filename}
+              className={`flex  ${
+                isRight ? "justify-center w-1/2 " : "justify-between ml-12 -mr-4"
+              } items-center ml-8 `}
+            >
+              {/* Use the items array based on the index from the group */}
+
+              <label className={`flex flex-col  items-center cursor-pointer`}>
+                <input
+                  type="checkbox"
+                  checked={stlFilesVisibility[file.filename]}
+                  onChange={() => handleToggleVisibility(file.filename)}
+                  className="mr-2 w-6 h-6 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                />
+                {/* Uncomment to display the filename */}
+                {/* <span className="text-xs font-medium text-gray-400">{file.filename}</span> */}
+              </label>
+            </div>
+          ))}
+        </div>
+      </div>
+
+
+<div className="flex justify-between items-center -mt-2">
+{
+        !isRight ?  <span className="text-xs font-medium text-gray-400">{showPressureImage ? `Pressure Image` : `Pressure Image`}</span> : null
+       }
+
+<div >
+<label
+        className={`ml-8 flex items-center ${
+          !isRight ? "justify" : "justify-start"
+        } cursor-pointer mb-2`}
+      >
+     
+        <input
+          type="checkbox"
+          checked={showPressureImage}
+          onChange={togglePressureImage}
+          className="mr-7 -mt-1 w-6 h-6 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+        />
+        {/* Uncomment to display the pressure image text */}
+      
+      </label>
+</div>
+</div>
+
+      {isTitle ? (
+        <div className="flex items-center gap-2 text-white pt-2 pb-2">
+          <LuSettings2 className="h-6 w-6 text-sky-500" /> Edit design
+          structure:
+        </div>
+      ) : (
+        <div className="flex items-center gap-2 text-white pt-2 pb-2">
+          <LuSettings2 className="h-6 w-6 text-primary" />
+        </div>
+      )}
+
+      {/* Slider for Shoe Visibility */}
+      <div className="ml-8 flex flex-col w-2/3">
+        <label className="text-gray-300 text-sm">{`${title} Foot Shoe Visibility:`}</label>
+        <input
+          type="range"
+          min="0"
+          max="1"
+          step="0.1"
+          value={shoeVisibility}
+          onChange={(e) => handleShoeVisibilityChange(Number(e.target.value))}
+          className="mt-2 hover:cursor-grabbing"
+        />
+      </div>
+
+      {/* Color Picker for Shoe */}
+      <div className="ml-8 flex flex-col">
+        <label className="text-gray-300 text-sm">{`${title} Foot Shoe Color:`}</label>
+        <input
+          type="color"
+          value={shoeColor}
+          onChange={handleShoeColorChange}
+          className="mt-2"
+        />
+      </div>
+
+      {/* Color Picker for Skeleton Color */}
+      <div className="ml-8 flex flex-col">
+        <label className="text-gray-300 text-sm">{`${title} Skeleton Color:`}</label>
+        <input
+          type="color"
+          value={skeletonColor}
+          onChange={handleSkeletonColorChange}
+          className="mt-2"
+        />
+      </div>
+    </div>
+  );
+}
+
+function STLViewer({ id }) {
   const canvasRef = useRef(null);
   const [stlFiles, setStlFiles] = useState([]);
   const [stlFilesVisibility, setStlFilesVisibility] = useState({});
@@ -32,25 +176,18 @@ function STLViewer({id}) {
 
       const camera = new BABYLON.ArcRotateCamera(
         "camera1",
-        Math.PI / 2, // Alpha
-        Math.PI / 3, // Beta (adjusted for a better view angle)
-        4, // Radius (distance from the target)
-        BABYLON.Vector3.Zero(), // Target
+        Math.PI / 2,
+        Math.PI / 3,
+        4,
+        BABYLON.Vector3.Zero(),
         scene
       );
 
-      // Set limits on zooming
       camera.upperRadiusLimit = 800;
       camera.lowerRadiusLimit = 50;
-
-      // Set angles limits
       camera.lowerBetaLimit = 0.1;
       camera.upperBetaLimit = Math.PI - 0.1;
-
-      // Enable camera inertia
       camera.inertia = 0.9;
-
-      // Optional: Set the initial camera position
       camera.setPosition(new BABYLON.Vector3(-300, 352, -450));
 
       camera.attachControl(canvas, true);
@@ -119,7 +256,6 @@ function STLViewer({id}) {
             );
             material.diffuseColor = new BABYLON.Color3(1, 1, 1); // Default color
 
-
             if (file.filename === "Right_InternalStructure_Hollow.STL") {
               const texture = new BABYLON.Texture(
                 "/DesignSample/PressureImageRight.JPG",
@@ -151,7 +287,6 @@ function STLViewer({id}) {
 
             mesh.material = material;
             generatePlanarUVs(mesh);
-            
           });
         },
         null,
@@ -173,6 +308,7 @@ function STLViewer({id}) {
     });
   };
 
+  
   const handleToggleLeftPressureImage = () => {
     setShowLeftPressureImage((prev) => {
       const newState = !prev;
@@ -221,8 +357,8 @@ function STLViewer({id}) {
     const leftShoeMesh = sceneRef.current.getMeshByName("Left_FootShoe.STL");
     if (leftShoeMesh && leftShoeMesh.material) {
       leftShoeMesh.material.diffuseColor =
-        BABYLON.Color3.FromHexString(newColor); // Change color
-      leftShoeMesh.material.needsRefresh = true; // Notify Babylon to refresh the material
+        BABYLON.Color3.FromHexString(newColor);
+      leftShoeMesh.material.needsRefresh = true;
     }
   };
 
@@ -232,8 +368,8 @@ function STLViewer({id}) {
     const rightShoeMesh = sceneRef.current.getMeshByName("Right_FootShoe.STL");
     if (rightShoeMesh && rightShoeMesh.material) {
       rightShoeMesh.material.diffuseColor =
-        BABYLON.Color3.FromHexString(newColor); // Change color
-      rightShoeMesh.material.needsRefresh = true; // Notify Babylon to refresh the material
+        BABYLON.Color3.FromHexString(newColor);
+      rightShoeMesh.material.needsRefresh = true;
     }
   };
 
@@ -245,7 +381,7 @@ function STLViewer({id}) {
     if (leftSkeletonMesh && leftSkeletonMesh.material) {
       leftSkeletonMesh.material.diffuseColor =
         BABYLON.Color3.FromHexString(newColor);
-      leftSkeletonMesh.material.needsRefresh = true; // Notify Babylon to refresh the material
+      leftSkeletonMesh.material.needsRefresh = true;
     }
   };
 
@@ -257,7 +393,7 @@ function STLViewer({id}) {
     if (rightSkeletonMesh && rightSkeletonMesh.material) {
       rightSkeletonMesh.material.diffuseColor =
         BABYLON.Color3.FromHexString(newColor);
-      rightSkeletonMesh.material.needsRefresh = true; // Notify Babylon to refresh the material
+      rightSkeletonMesh.material.needsRefresh = true;
     }
   };
 
@@ -302,188 +438,60 @@ function STLViewer({id}) {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-full p-4">
-      <div className="flex items-center gap-4 -mt-20 mb-14">
+      <div className="flex items-center gap-4 -mt-5 mb-14">
         <div className="w-20 md:w-64 h-[0.5px] bg-zinc-400"></div>
-        <h1 className="text-xl text-center dark:text-white font-bold">STL Viewer</h1>
+        <h1 className="text-xl text-center dark:text-white font-bold">
+          STL Viewer
+        </h1>
         <div className="w-20 md:w-64 h-[0.5px] bg-zinc-400"></div>
       </div>
       <div className="flex flex-row-reverse items-center justify-center gap-10 ">
-        <div className="flex items-center justify-between p-8 rounded-lg gap-6">
-          <div className="flex flex-col space-y-2 bg-[#7D7C7D] dark:bg-zinc-800 p-8 rounded-lg shadow-2xl">
-            <div className="flex justify-center items-center gap-4 mb-4">
-              <div className="w-20 md:w-20 h-[0.5px] bg-sky-400"></div>
-              <h1 className="text-xl text-center text-white font-bold">Left</h1>
-              <div className="w-20 md:w-20 h-[0.5px] bg-sky-400"></div>
-            </div>
-
-            <div className="flex items-center gap-2 text-white pb-2">
-              <MdOutlineDesignServices className="h-6 w-6 text-sky-500" />{" "}
-              Automatic insole design :
-            </div>
-            {leftGroup.map((file) => (
-              <div key={file.filename} className="ml-8 flex items-center">
-                <label className="flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={stlFilesVisibility[file.filename]}
-                    onChange={() => handleToggleVisibility(file.filename)}
-                    className="mr-2 w-6 h-6 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                  />
-                  <span className="text-sm font-medium text-gray-400">
-                    {file.filename}
-                  </span>
-                </label>
-              </div>
-            ))}
-
-            <label className="ml-8 flex items-center cursor-pointer mb-2">
-              <input
-                type="checkbox"
-                checked={showLeftPressureImage}
-                onChange={handleToggleLeftPressureImage}
-                className="mr-2 w-6 h-6 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-              />
-              <span className="text-sm font-medium text-gray-400">
-                {showLeftPressureImage
-                  ? "Hide Left Pressure Image"
-                  : "Show Left Pressure Image"}
-              </span>
-            </label>
-
-            <div className="flex items-center gap-2 text-white pt-2 pb-2">
-              <LuSettings2 className="h-6 w-6 text-sky-500" /> Edit design
-              structure :
-            </div>
-
-            {/* Slider for Left Foot Shoe Visibility */}
-            <div className="ml-8 flex flex-col w-2/3">
-              <label className="text-white">Left Foot Shoe Visibility:</label>
-              <input
-                type="range"
-                min="0"
-                max="1"
-                step="0.1"
-                value={leftShoeVisibility}
-                onChange={(e) =>
-                  handleLeftShoeVisibilityChange(Number(e.target.value))
-                }
-                className="mt-2 hover:cursor-grabbing"
-              />
-            </div>
-
-            {/* Color Picker for Left Foot Shoe */}
-            <div className="ml-8 flex flex-col">
-              <label className="text-white">Left Foot Shoe Color:</label>
-              <input
-                type="color"
-                value={leftShoeColor}
-                onChange={handleLeftShoeColorChange}
-                className="mt-2"
-              />
-            </div>
-
-            {/* Color Picker for Left Skeleton Color */}
-            <div className="ml-8 flex flex-col">
-              <label className="text-white">Left Skeleton Color:</label>
-              <input
-                type="color"
-                value={leftSkeletonColor}
-                onChange={handleLeftSkeletonColorChange}
-                className="mt-2"
-              />
-            </div>
-          </div>
+        <div className="flex flex-col md:flex-row items-center justify-between p-8 rounded-lg gap-12">
           <canvas
             className="mx-auto border border-zinc-400 rounded-md p-2 bg-zinc-800"
-            style={{ width: "800px", height: "450px", borderRadius: "13px" }}
+            style={{ width: "950px", height: "550px", borderRadius: "13px" }}
             ref={canvasRef}
           />
-          <div className="flex flex-col h-full space-y-2 bg-[#7D7C7D] dark:bg-zinc-800 p-8 rounded-lg shadow-2xl">
-            <div className="flex justify-center items-center gap-4 mb-4">
-              <div className="w-20 md:w-20 h-[0.5px] bg-sky-400"></div>
+          <div className="flex flex-col bg-[#7D7C7D] dark:bg-zinc-800 -mr-5 rounded-xl ">
+            <div className="flex justify-center items-center gap-4 mb-4 mt-6">
+              <div className="w-20 md:w-28 h-[0.5px] bg-sky-400"></div>
               <h1 className="text-xl text-center text-white font-bold">
-                Right
+                Settings
               </h1>
-              <div className="w-20 md:w-20 h-[0.5px] bg-sky-400"></div>
+              <div className="w-20 md:w-28 h-[0.5px] bg-sky-400"></div>
             </div>
-
-            <div className="flex items-center gap-2 text-white pb-2">
-              <MdOutlineDesignServices className="h-6 w-6 text-sky-500" />{" "}
-              Automatic insole design :
-            </div>
-            {rightGroup.map((file) => (
-              <div
-                key={file.filename}
-                className="pl-8 mt-4 mb-4 flex items-center"
-              >
-                <label className="flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={stlFilesVisibility[file.filename]}
-                    onChange={() => handleToggleVisibility(file.filename)}
-                    className="mr-2 w-6 h-6 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                  />
-                  <span className="text-sm font-medium text-gray-400">
-                    {file.filename}
-                  </span>
-                </label>
-              </div>
-            ))}
-
-            <label className="ml-8 flex items-center cursor-pointer  ">
-              <input
-                type="checkbox"
-                checked={showRightPressureImage}
-                onChange={handleToggleRightPressureImage}
-                className="mr-2 w-6 h-6 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+            <div className="flex -space-x-14  ">
+              <ShoeSection
+                title="Left"
+                group={leftGroup}
+                stlFilesVisibility={stlFilesVisibility}
+                handleToggleVisibility={handleToggleVisibility}
+                showPressureImage={showLeftPressureImage}
+                togglePressureImage={handleToggleLeftPressureImage}
+                shoeVisibility={leftShoeVisibility}
+                handleShoeVisibilityChange={handleLeftShoeVisibilityChange}
+                shoeColor={leftShoeColor}
+                handleShoeColorChange={handleLeftShoeColorChange}
+                skeletonColor={leftSkeletonColor}
+                handleSkeletonColorChange={handleLeftSkeletonColorChange}
+                isTitle={true}
+                isRight={false}
               />
-              <span className="text-sm font-medium text-gray-400">
-                {showRightPressureImage
-                  ? "Hide Right Pressure Image"
-                  : "Show Right Pressure Image"}
-              </span>
-            </label>
-
-            <div className="flex items-center gap-2 text-white pb-2 pt-2 ">
-              <LuSettings2 className="h-6 w-6 text-sky-500" /> Edit design
-              structure :
-            </div>
-
-            {/* Slider for Right Foot Shoe Visibility */}
-            <div className="ml-8 flex flex-col w-2/3">
-              <label className="text-white">Right Foot Shoe Visibility:</label>
-              <input
-                type="range"
-                min="0"
-                max="1"
-                step="0.1"
-                value={rightShoeVisibility}
-                onChange={(e) =>
-                  handleRightShoeVisibilityChange(Number(e.target.value))
-                }
-                className="mt-2 hover:cursor-grabbing"
-              />
-            </div>
-
-            {/* Color Picker for Right Foot Shoe */}
-            <div className="ml-8 flex flex-col">
-              <label className="text-white">Right Foot Shoe Color:</label>
-              <input
-                type="color"
-                value={rightShoeColor}
-                onChange={handleRightShoeColorChange}
-                className="mt-2"
-              />
-            </div>
-
-            {/* Color Picker for Right Skeleton Color */}
-            <div className="ml-8 flex flex-col">
-              <label className="text-white">Right Skeleton Color:</label>
-              <input
-                type="color"
-                value={rightSkeletonColor}
-                onChange={handleRightSkeletonColorChange}
-                className="mt-2"
+              <ShoeSection
+                title="Right"
+                group={rightGroup}
+                stlFilesVisibility={stlFilesVisibility}
+                handleToggleVisibility={handleToggleVisibility}
+                showPressureImage={showRightPressureImage}
+                togglePressureImage={handleToggleRightPressureImage}
+                shoeVisibility={rightShoeVisibility}
+                handleShoeVisibilityChange={handleRightShoeVisibilityChange}
+                shoeColor={rightShoeColor}
+                handleShoeColorChange={handleRightShoeColorChange}
+                skeletonColor={rightSkeletonColor}
+                handleSkeletonColorChange={handleRightSkeletonColorChange}
+                isTitle={false}
+                isRight={true}
               />
             </div>
           </div>
